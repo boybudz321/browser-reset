@@ -6,14 +6,14 @@ REM ##		DATE: 07/01/2025
 REM ##
 REM ##		How it works:
 REM ##		
-REM ##		-> The script displays a menu with options to reset Chrome, reset IE, 
+REM ##		-> The script displays a menu with options to Restarting REM set Chrome, Restarting REM set IE, 
 REM ##			or exit.
 REM ##		-> The user enters their choice.
 REM ##		-> The script uses if statements to check the user's input and goto 
 REM ##			statements to jump to the appropriate section of code.
-REM ##		-> Each reset section performs the respective reset procedure 
+REM ##		-> Each Restarting REM set section performs the respective Restarting REM set procedure 
 REM ##			(either Chrome or IE).
-REM ##		-> After completing a reset, the script returns to the main menu, 
+REM ##		-> After completing a Restarting REM set, the script returns to the main menu, 
 REM ##			allowing the user to choose another option or exit.
 REM ##		-> If the user chooses to exit, the script terminates.
 REM ##
@@ -24,7 +24,7 @@ REM ############################################################################
 
 
 @echo off
-setlocal
+REM setlocal
 
 echo """"""""""""""""""""""""""""""""""""""""
 echo "     ___                              "
@@ -38,107 +38,92 @@ echo "  /_/|_|\__/___/\__/\__/              "
 echo "     by ICT Department                "
 echo """"""""""""""""""""""""""""""""""""""""
 
-
-:main_menu
-echo.
-echo Select a browser to reset:
-echo 1. Google Chrome
-echo 2. Microsoft Edge
-echo 3. Mozilla Firefox
-echo 4. Exit
+echo Starting Browser Reset...
 echo.
 
-set "choice="
-set /p "choice=Enter your choice (1-4): "
+call :reset_chrome
+call :reset_edge
+call :reset_firefox
 
-if "%choice%"=="1" goto :chrome_reset
-if "%choice%"=="2" goto :edge_reset
-if "%choice%"=="3" goto :firefox_reset
-if "%choice%"=="4" goto :end
-
-echo Invalid choice. Please try again.
-goto :main_menu
-
-:chrome_reset
 echo.
-echo Closing Chrome...
-taskkill /f /im chrome.exe /T >nul 2>&1
+echo Browser reset process complete.
+pause
+endlocal
 
-echo Trying to reset Chrome with flags first...
-start "" "chrome.exe" --disable-extensions --restore-last-session --disable-sync --first-run
-timeout /t 5 /nobreak >nul
-
-echo If the Chrome problem persists, you may need to delete user data.
-set /p "deleteChromeData=Do you want to DELETE ALL Chrome data? (y/n): "
-
-if /i "%deleteChromeData%" == "y" (
-    set "chrome_user_data=%LOCALAPPDATA%\Google\Chrome\User Data"
-    echo Deleting Chrome user data...
-    rmdir /s /q "%chrome_user_data%"
-    echo Starting Chrome with a fresh profile...
-    start "" "chrome.exe"
-) else (
-    echo No changes made to Chrome user data.
+:reset_chrome
+where chrome.exe >nul 2>&1
+if errorlevel 1 (
+    echo Chrome is not installed. Skipping Chrome reset.
+    goto :eof  REM Changed to goto :eof
 )
-goto :main_menu
 
-
-:edge_reset
 echo.
-echo Closing Edge...
+echo Resetting Chrome...
+taskkill /f /im chrome.exe /T >nul 2>&1
+echo Trying to reset Chrome with flags first...
+REM start "" "chrome.exe" --disable-extensions --restore-last-session --disable-sync --first-run
+timeout /t 5 /nobreak >nul
+echo If the Chrome problem persists, you may need to manually delete user data at %LOCALAPPDATA%\Google\Chrome\User Data
+goto :eof REM Changed to goto :eof
+
+:reset_edge
+where msedge.exe >nul 2>&1
+if errorlevel 1 (
+    echo Edge is not installed. Skipping Edge reset.
+    goto :eof REM Changed to goto :eof
+)
+
+echo.
+echo Resetting Microsoft Edge...
 taskkill /f /im msedge.exe /T >nul 2>&1
-
 echo Resetting Microsoft Edge settings...
-
-set "edge_user_data=%LOCALAPPDATA%\Microsoft\Edge\User Data"
-
+REM set "edge_user_data=%LOCALAPPDATA%\Microsoft\Edge\User Data"
 if exist "%edge_user_data%" (
     echo Backing up Edge user data (renaming it)...
     for /d %%a in ("%edge_user_data%\*.*") do (
-        set "old_profile=%%a"
-        set "new_profile=%%a.bak"
+        REM set "old_profile=%%a"
+        REM set "new_profile=%%a.bak"
         if not exist "%%a.bak" (
-            ren "%%a" "%%a.bak"
+            REM ren "%%a" "%%a.bak"
             echo Profile "%%a" backed up to "%%a.bak"
         ) else (
             echo Backup already exists for "%%a". Skipping backup.
         )
     )
     echo Starting Edge with a new profile...
-    start "" "msedge.exe"
+    REM start "" "msedge.exe"
 ) else (
     echo Edge user data not found.
 )
+goto :eof REM Changed to goto :eof
 
-goto :main_menu
+:reset_firefox
+where firefox.exe >nul 2>&1
+if errorlevel 1 (
+    echo Firefox is not installed. Skipping Firefox reset.
+    goto :eof REM Changed to goto :eof
+)
 
-:firefox_reset
 echo.
-echo Closing Firefox...
+echo Resetting Firefox...
 taskkill /f /im firefox.exe /T >nul 2>&1
-
 echo Resetting Firefox profile...
-set "firefox_profile=%APPDATA%\Mozilla\Firefox\Profiles"
-
+REM set "firefox_profile=%APPDATA%\Mozilla\Firefox\Profiles"
 if exist "%firefox_profile%" (
     echo Backing up Firefox profile (renaming it)...
     for /d %%a in ("%firefox_profile%\*.*") do (
-        set "old_profile=%%a"
-        set "new_profile=%%a.bak"
+        REM set "old_profile=%%a"
+        REM set "new_profile=%%a.bak"
         if not exist "%%a.bak" (
-            ren "%%a" "%%a.bak"
+            REM ren "%%a" "%%a.bak"
             echo Profile "%%a" backed up to "%%a.bak"
         ) else (
             echo Backup already exists for "%%a". Skipping backup.
         )
     )
     echo Starting Firefox with a new profile...
-    start "" "firefox.exe"
+    REM start "" "firefox.exe"
 ) else (
     echo Firefox profile not found.
 )
-goto :main_menu
-
-:end
-echo Exiting...
-endlocal
+goto :eof REM Changed to goto :eof
