@@ -6,14 +6,14 @@ REM ##		DATE: 07/01/2025
 REM ##
 REM ##		How it works:
 REM ##		
-REM ##		-> The script displays a menu with options to Restarting REM set Chrome, Restarting REM set IE, 
+REM ##		-> The script displays a menu with options to Restarting set Chrome, Restarting set IE, 
 REM ##			or exit.
 REM ##		-> The user enters their choice.
 REM ##		-> The script uses if statements to check the user's input and goto 
 REM ##			statements to jump to the appropriate section of code.
-REM ##		-> Each Restarting REM set section performs the respective Restarting REM set procedure 
+REM ##		-> Each Restarting set section performs the respective Restarting set procedure 
 REM ##			(either Chrome or IE).
-REM ##		-> After completing a Restarting REM set, the script returns to the main menu, 
+REM ##		-> After completing a Restarting set, the script returns to the main menu, 
 REM ##			allowing the user to choose another option or exit.
 REM ##		-> If the user chooses to exit, the script terminates.
 REM ##
@@ -61,7 +61,7 @@ echo.
 echo Resetting Chrome...
 taskkill /f /im chrome.exe /T >nul 2>&1
 echo Trying to reset Chrome with flags first...
-REM start "" "chrome.exe" --disable-extensions --restore-last-session --disable-sync --first-run
+start "" "chrome.exe" --disable-extensions --restore-last-session --disable-sync --first-run
 timeout /t 5 /nobreak >nul
 echo If the Chrome problem persists, you may need to manually delete user data at %LOCALAPPDATA%\Google\Chrome\User Data
 goto :eof REM Changed to goto :eof
@@ -77,21 +77,21 @@ echo.
 echo Resetting Microsoft Edge...
 taskkill /f /im msedge.exe /T >nul 2>&1
 echo Resetting Microsoft Edge settings...
-REM set "edge_user_data=%LOCALAPPDATA%\Microsoft\Edge\User Data"
+set "edge_user_data=%LOCALAPPDATA%\Microsoft\Edge\User Data"
 if exist "%edge_user_data%" (
     echo Backing up Edge user data (renaming it)...
     for /d %%a in ("%edge_user_data%\*.*") do (
-        REM set "old_profile=%%a"
-        REM set "new_profile=%%a.bak"
+        set "old_profile=%%a"
+        set "new_profile=%%a.bak"
         if not exist "%%a.bak" (
-            REM ren "%%a" "%%a.bak"
+            ren "%%a" "%%a.bak"
             echo Profile "%%a" backed up to "%%a.bak"
         ) else (
             echo Backup already exists for "%%a". Skipping backup.
         )
     )
     echo Starting Edge with a new profile...
-    REM start "" "msedge.exe"
+    start "" "msedge.exe"
 ) else (
     echo Edge user data not found.
 )
@@ -108,21 +108,21 @@ echo.
 echo Resetting Firefox...
 taskkill /f /im firefox.exe /T >nul 2>&1
 echo Resetting Firefox profile...
-REM set "firefox_profile=%APPDATA%\Mozilla\Firefox\Profiles"
+set "firefox_profile=%APPDATA%\Mozilla\Firefox\Profiles"
 if exist "%firefox_profile%" (
     echo Backing up Firefox profile (renaming it)...
     for /d %%a in ("%firefox_profile%\*.*") do (
-        REM set "old_profile=%%a"
-        REM set "new_profile=%%a.bak"
+        set "old_profile=%%a"
+        set "new_profile=%%a.bak"
         if not exist "%%a.bak" (
-            REM ren "%%a" "%%a.bak"
+            ren "%%a" "%%a.bak"
             echo Profile "%%a" backed up to "%%a.bak"
         ) else (
             echo Backup already exists for "%%a". Skipping backup.
         )
     )
     echo Starting Firefox with a new profile...
-    REM start "" "firefox.exe"
+    start "" "firefox.exe"
 ) else (
     echo Firefox profile not found.
 )
